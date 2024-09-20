@@ -22,6 +22,8 @@ CAKGHWCDummy6Axis::CAKGHWCDummy6Axis(void)
 	m_bConnect = FALSE;
 	m_cClient.SetParentDlg(this);
 	m_cServer.SetParentDlg(this);
+	m_bTimerPause = 0;
+	m_bDataReceived = TRUE;
 }
 
 CAKGHWCDummy6Axis::~CAKGHWCDummy6Axis(void)
@@ -107,7 +109,7 @@ void CAKGHWCDummy6Axis::DisconnectFromServer()
 	{
 		m_cClient.ShutDown();  // Gracefully shutdown the client socket
 		m_cClient.Close();     // Close the client socket connection
-		m_bConnect = FALSE;    // Reset the connection flag
+		m_bConnect = 0;    // Reset the connection flag
 
 		AddToLog(_T("TCP/IP client disconnected successfully."));
 	}
@@ -166,8 +168,11 @@ void CAKGHWCDummy6Axis::OnReceive()
 
 	// Receive data
 	int bytesReceived = m_cClient.Receive(cBuff, sizeof(cBuff));
-	if (bytesReceived <= 0) return; // No data received, or an error occurred
-
+	if (bytesReceived <= 0) // No data received, or an error occurred
+	{
+		return;
+	}
+		
 	// Determine if we should break on CRLF
 	BOOL bChkCRLF = !PathFileExists(_T("D://NCRLF.txt"));
 
@@ -202,48 +207,6 @@ void CAKGHWCDummy6Axis::resetBuffer()
 {
 	memset(m_cBuff, 0, sizeof(m_cBuff));  // Efficiently set the buffer to zero
 	m_iReceivedDataLength = 0;  // Reset the data length
-}
-
-void CAKGHWCDummy6Axis::OnSend()
-{
-
-}
-
-void CAKGHWCDummy6Axis::OnClose()
-{
-	if (m_bConnect)
-	{
-		m_cClient.Close();
-		AddToLog(_T("TCP IP Connection Closed."));
-		m_bConnect = 0;
-	}
-}
-
-void CAKGHWCDummy6Axis::DataToSend(const CString& csSendData)
-{
-	m_recvData.Empty();  // Clear the receive data buffer
-	const int length = csSendData.GetLength();
-
-	// Create a buffer to hold the data and the additional carriage return
-	CHAR cBuff[1024] = { 0 };
-	memcpy(cBuff, csSendData, length);
-	cBuff[length] = '\r';  // Add carriage return
-
-	// Send the buffer over the client
-	m_cClient.Send(cBuff, length + 1);
-}
-
-void CAKGHWCDummy6Axis::DataBarcodeDataToSend(const CString& csSendData)
-{
-	m_recvData.Empty();  // Clear the receive data buffer
-	const int length = csSendData.GetLength();
-
-	// Create a buffer to hold the data
-	CHAR cBuff[1024] = { 0 };
-	memcpy(cBuff, csSendData, length);
-
-	// Send the buffer over the client
-	m_cClient.Send(cBuff, length);
 }
 
 void CAKGHWCDummy6Axis::AddToLog(const CString& cs, ...)
@@ -287,6 +250,7 @@ unsigned char CAKGHWCDummy6Axis::calculateChecksum(const std::vector<unsigned ch
 
 // Function to create a packet to send to the Laser
 std::vector<unsigned char> CAKGHWCDummy6Axis::createPacket(unsigned char command, const std::vector<unsigned char>& arguments) {
+	
 	// Calculate the size of the packet upfront and reserve the required space
 	size_t packetSize = 5 + arguments.size(); // 5: Start byte, N byte, Command Start byte, Command byte, Stop byte
 	std::vector<unsigned char> packet;
@@ -307,9 +271,18 @@ std::vector<unsigned char> CAKGHWCDummy6Axis::createPacket(unsigned char command
 	packet.push_back(calculateChecksum(packet));
 
 	return packet;
+	
 }
 
 void CAKGHWCDummy6Axis::DataToSend(const std::vector<unsigned char>& data) {
+ 
+	m_bTimerPause = 1;
+
+	while (m_bDataReceived == 0)
+	{
+		DoEvent(10);
+	}
+
 	m_bDataReceived = false;
 	m_recvData.Empty();
 
@@ -317,7 +290,55 @@ void CAKGHWCDummy6Axis::DataToSend(const std::vector<unsigned char>& data) {
 
 	// Directly send the data vector
 	m_cClient.Send(reinterpret_cast<const CHAR*>(data.data()), static_cast<int>(data.size()));
+
+	m_bTimerPause = 0;
+
 }
+
+void CAKGHWCDummy6Axis::DoEvent(int iDelay)
+{
+	MSG msg;
+	ULONGLONG dwStTime = GetTickCount64();
+	ULONGLONG dwEndTime = dwStTime + iDelay;
+
+	while (GetTickCount64() < dwEndTime)
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}
+
+void CAKGHWCDummy6Axis::OnSend()
+{
+
+}
+
+void CAKGHWCDummy6Axis::OnClose()
+{
+	if (m_bConnect)
+	{
+		m_cClient.Close();
+		AddToLog(_T("TCP IP Connection Closed."));
+		m_bConnect = 0;
+	}
+}
+
+void CAKGHWCDummy6Axis::DataBarcodeDataToSend(const CString& csSendData)
+{
+	m_recvData.Empty();  // Clear the receive data buffer
+	const int length = csSendData.GetLength();
+
+	// Create a buffer to hold the data
+	CHAR cBuff[1024] = { 0 };
+	memcpy(cBuff, csSendData, length);
+
+	// Send the buffer over the client
+	m_cClient.Send(cBuff, length);
+}
+
 
 // Send a command from the client to the server
 void CAKGHWCDummy6Axis::SendCommandToServer(BYTE command)

@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "AKGHWCDummy6Axis.h"       
+#include "AKGHWCDummy6Axis.h"    
+#include "TrumpfLaserInterfaceDLL\TrumpLaserInterfaceWraper.h"
+#include "INI.h"
 
 enum class COMMAND
 {
@@ -29,22 +31,22 @@ enum class COMMAND
 
 struct FirmwareDetails
 {
-	uint16_t fpgaHardwareRevMajor;
-	uint16_t fpgaHardwareRevMinor;
-	uint16_t fpgaHardwareRelease;
-	uint16_t fpgaFirmwareRevMajor;
-	uint16_t fpgaFirmwareRevMinor;
-	uint16_t fpgaFirmwareRelease;
-	uint32_t stellarisFirmwareVersion;
-	uint16_t driverFirmware;
+	UINT16 fpgaHardwareRevMajor;
+	UINT16 fpgaHardwareRevMinor;
+	UINT16 fpgaHardwareRelease;
+	UINT16 fpgaFirmwareRevMajor;
+	UINT16 fpgaFirmwareRevMinor;
+	UINT16 fpgaFirmwareRelease;
+	UINT32 stellarisFirmwareVersion;
+	UINT16 driverFirmware;
 };
 
 struct LaserDescription
 {
-	uint16_t ratedPowerLevel; 
-	uint16_t maxPulseRate;    
-	uint16_t ratedEnergy;     
-	uint32_t features;        
+	UINT16 ratedPowerLevel; 
+	UINT16 maxPulseRate;    
+	UINT16 ratedEnergy;     
+	UINT32 features;        
 };
 
 // CLaserInterface2NNDlg dialog
@@ -55,7 +57,7 @@ public:
 	CLaserInterface2NNDlg(CWnd* pParent = nullptr); // standard constructor
 	~CLaserInterface2NNDlg(); // destructor
 	CAKGHWCDummy6Axis m_cAKGHWCDummy6Axis;
-
+	CTrumpLaserInterfaceWraper m_cTrumpLaserInterfaceWraper;
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_LASERINTERFACE2NN_DIALOG };
@@ -72,6 +74,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+
+	CIniReader m_IniReadWritePrm;
+
 	CToolTipCtrl m_ToolTip;
 
 	CBitmap m_bmpGrey, m_bmpRed, m_bmpYellow;
@@ -95,9 +100,13 @@ public:
 	CEdit m_EditLaserIPAdd;
 	CString m_csLaserIPAddress;
 	int m_iPort;
+	bool m_bConnectResponce = false;
 
 	// Initialize RAL ON/OFF state
 	bool m_bRalOn = false;  // Assuming the initial state is RAL OFF
+
+	// Initialize Enable ON/OFF state
+	bool m_bEnableOn = false;  // Assuming the initial state is Enable OFF
 
 	UINT_PTR m_nTimerID;
 
@@ -124,6 +133,7 @@ public:
 	CString m_csSetSimmer;
 	CString m_csSetDutyFactor;
 	CString m_csSetBurstLength;
+
 	CString m_csGetControlMode;
 	CString m_csGetCWPulse;
 	CString m_csGetWaveform;
@@ -145,14 +155,14 @@ public:
 	CFont m_fontLarge;
 
 	UINT getBaudRate();
-	BOOL getCheckSumValidation();
 	UINT getLaserInterfaceControlMode();
 	UINT getLaserControlSignals();
 	UINT getAnalogOrActiveSimmerCurrent(BOOL bType);
-	UINT32 getPulseWaveform(UINT16& selectedWaveform);
+	UINT getPulseWaveform(UINT& selectedWaveform);
 	UINT getPulseRate();
 	UINT getPulseBurstLength();
 	UINT getPumpDutyFactor();
+	BOOL getCheckSumValidation();
 
 	void setLEDLaserOn(bool val);
 	void setLEDLaserEnabled(bool val);
@@ -186,26 +196,26 @@ public:
 	bool setBaudRate(UINT32 baudRate);
 	void HandleBaudRateResponse(BYTE response);
 	
-	bool SetLaserInterfaceControlMode(UCHAR mode);
+	bool SetLaserInterfaceControlMode(UINT16 mode);
 	void HandleLaserInterfaceControlModeResponse(BYTE response);
 	
-	bool setLaserControlSignals(uint16_t controlSignals);
+	bool setLaserControlSignals(UINT16 controlSignals);
 	void HandleLaserControlSignalsResponse(BYTE response);
 	
-	bool setAnalogActiveCurrent(uint16_t currentValue);
-	bool setAnalogSimmerCurrent(uint16_t currentValue);
+	bool setAnalogActiveCurrent(UINT16 currentValue);
+	bool setAnalogSimmerCurrent(UINT16 currentValue);
 	void HandleAnalogCurrentSetPointResponse(BYTE response);
 	
-	bool setPulseWaveform(uint16_t waveformNumber);
+	bool setPulseWaveform(UINT16 waveformNumber);
 	void HandlePulseWaveformResponse(BYTE response);
 	
-	bool setPulseRate(uint32_t pulseRate);
+	bool setPulseRate(UINT32 pulseRate);
 	void HandlePulseRateResponse(BYTE response);
 	
-	bool setPulseBurstLength(uint32_t burstLength);
+	bool setPulseBurstLength(UINT32 burstLength);
 	void HandlePulseBurstLengthResponse(BYTE response);
 	
-	bool setPumpDutyFactor(uint16_t dutyFactor);
+	bool setPumpDutyFactor(UINT16 dutyFactor);
 	void HandlePumpDutyFactorResponse(BYTE response);
 
 	bool setPulseGeneratorParameters(UINT16 waveform, UINT32 pulseRate, UINT32 burstLength, UINT16 dutyFactor);
@@ -237,16 +247,21 @@ public:
 	afx_msg void OnEnKillfocusEditPrf();
 	afx_msg void OnEnKillfocusEditActive();
 	afx_msg void OnEnKillfocusEditSimmer();
+	void DutyFactor();
 	afx_msg void OnEnKillfocusEditDutyFactor();
 	afx_msg void OnEnKillfocusEditBurstLength();
+	void setStandby();
 	afx_msg void OnBnClickedButtonStandby();
+	void setEnable();
 	afx_msg void OnBnClickedButtonEnable();
+	void setTrigger();
 	afx_msg void OnBnClickedButtonTrigger();
+	void setRalOn();
 	afx_msg void OnBnClickedButtonRalOn();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnClose();
 	virtual void OnCancel();
 	virtual void OnOK();
 	HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	
+	void readWriteLaserActiveParameterSet(BOOL bIsReading);
 };

@@ -22,7 +22,6 @@ public:
     void OnSend();
     void OnClose();
 	void DataToSend(const std::vector<unsigned char>& data);
-    void DataToSend(const CString& csSendData);
     void DataBarcodeDataToSend(const CString& csSendData);
     void SendCommandToServer(BYTE command);
     void SendCommandToClient(BYTE command);
@@ -31,9 +30,9 @@ public:
     void resetBuffer();
     void setServerListenForClient(int port);
     void AddToLog(const CString& cs, ...);
-
     unsigned char calculateChecksum(const std::vector<unsigned char>& packet);
     std::vector<unsigned char> createPacket(unsigned char command, const std::vector<unsigned char>& arguments);
+    void DoEvent(int iDelay);
 
     CString m_csIpAdd;
     int m_iPort;
@@ -42,6 +41,6 @@ public:
     BOOL m_bDataReceived;
     BYTE m_cBuff[1024];
     UINT m_iReceivedDataLength;
-    
+    BOOL m_bTimerPause;
 
 };

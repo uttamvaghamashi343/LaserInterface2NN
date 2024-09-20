@@ -19,6 +19,7 @@ class CLaserInterface2NNApp : public CWinApp
 {
 public:
 	CLaserInterface2NNApp();
+	~CLaserInterface2NNApp();
 
 // Overrides
 public:
@@ -30,3 +31,4 @@ public:
 };
 
 extern CLaserInterface2NNApp theApp;
+

@@ -30,7 +30,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -96,6 +96,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(outdir)TrumpLaserInterfaceDll.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -115,9 +116,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(outdir)TrumpLaserInterfaceDll.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -144,6 +148,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(outdir)TrumpLaserInterfaceDll.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -170,6 +175,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(outdir)TrumpLaserInterfaceDll.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -186,6 +192,7 @@
     <ClInclude Include="AKGDummyInterface.h" />
     <ClInclude Include="AKGHWCDummy6Axis.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="INI.h" />
     <ClInclude Include="LaserInterface2NN.h" />
     <ClInclude Include="LaserInterface2NNDlg.h" />
     <ClInclude Include="pch.h" />
@@ -195,6 +202,7 @@
   <ItemGroup>
     <ClCompile Include="AKGDummyInterface.cpp" />
     <ClCompile Include="AKGHWCDummy6Axis.cpp" />
+    <ClCompile Include="INI.cpp" />
     <ClCompile Include="LaserInterface2NN.cpp" />
     <ClCompile Include="LaserInterface2NNDlg.cpp" />
     <ClCompile Include="pch.cpp">

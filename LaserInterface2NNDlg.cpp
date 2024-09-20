@@ -14,6 +14,9 @@
 #define new DEBUG_NEW
 #endif
 
+const CString ACTIVEPARAMETERSET_FILE_PATH = _T("C:\\SLTCard\\LaserActiveParameterSet.ini");
+#define READ_SETTING TRUE
+#define WRITE_SETTING FALSE
 
 // CLaserInterface2NNDlg dialog
 
@@ -184,13 +187,18 @@ BOOL CLaserInterface2NNDlg::OnInitDialog()
 	fillComboBoxAndControlBox();
 	setTooltipForControl();
 
+	readWriteLaserActiveParameterSet(READ_SETTING);
+
+	// Disable "Disconnect" button
+	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(FALSE);
+
 	// Initialize brushes
 	m_brushRed.CreateSolidBrush(RGB(255, 0, 0));   // Red color
 	m_brushGreen.CreateSolidBrush(RGB(0, 255, 0)); // Green color
 
 	// Create a larger font
 	m_fontLarge.CreatePointFont(160, _T("Arial")); // Font size 16
-
+	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -320,18 +328,43 @@ void CLaserInterface2NNDlg::setTooltipForControl()
 
 void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
 {
+	/*static BOOL bFirstTime = TRUE;
+	if (bFirstTime)
+	{
+		bFirstTime = FALSE;
+		CRect sRect;
+		GetWindowRect(sRect);
+		m_cTrumpLaserInterfaceWraper.CreateLaserInterfaceDlg(this, sRect);
+	}
+
+	m_cTrumpLaserInterfaceWraper.ShowSetingDlg();
+		return;*/
+
+
 	UpdateData(TRUE);
 	connectAsTCPIPClient(m_csLaserIPAddress, m_iPort);
-	Sleep(500);
+	Sleep(50);
 
-	bool bConnect = setBaudRate(115200);
+	m_bConnectResponce = setBaudRate(115200);
 
-	if (bConnect)
+	if (m_bConnectResponce)
+	{
+		// Disable "Connect" button
+		GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT)->EnableWindow(FALSE);
+	}
+	
+	// Enable "Disconnect" button
+	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(TRUE);
+	
+
+	if (m_bConnectResponce)
 	{
 		GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connected"));
 
+		readWriteLaserActiveParameterSet(READ_SETTING);
+
 		// Start a timer to periodically update the data
-		m_nTimerID = SetTimer(1, 1000, nullptr);  // Timer ID = 1, Interval = 1000 ms (1 second)
+		m_nTimerID = SetTimer(1, 500, nullptr);  // Timer ID = 1, Interval = 500 ms (0.5 second)
 
 		// Initial data fetch
 		UpdateLaserData();
@@ -339,6 +372,7 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
 		setLEDLaserEmission(1);
 
 		OnBnClickedButtonStandby();
+
 	}
 	else
 	{
@@ -358,6 +392,8 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
 
 void CLaserInterface2NNDlg::UpdateLaserData()
 {
+	if (m_cAKGHWCDummy6Axis.m_bTimerPause == 1)
+		return;
 	UINT16 ilaserTemperature = 0;
 	UINT16 ibeamDeliveryTemperature = 0;
 	if (!getLaserTemperatures(ilaserTemperature, ibeamDeliveryTemperature))
@@ -368,6 +404,8 @@ void CLaserInterface2NNDlg::UpdateLaserData()
 	setReceivedDataFromTheLaserStatus(COMMAND::L_LTV, dlaserTemperatureCelsius);
 	setReceivedDataFromTheLaserStatus(COMMAND::L_BTV, dbeamDeliveryTemperatureCelsius);
 
+	if (m_cAKGHWCDummy6Axis.m_bTimerPause == 1)
+		return;
 	UINT16 ipreAmplifierCurrent = 0;
 	UINT16 ipowerAmplifierCurrent = 0;
 	if (!getLaserCurrents(ipreAmplifierCurrent, ipowerAmplifierCurrent))
@@ -378,6 +416,8 @@ void CLaserInterface2NNDlg::UpdateLaserData()
 	setReceivedDataFromTheLaserStatus(COMMAND::L_PACV, dpreAmplifierCurrent);
 	setReceivedDataFromTheLaserStatus(COMMAND::L_MACV, dpowerAmplifierCurrent);
 
+	if (m_cAKGHWCDummy6Axis.m_bTimerPause == 1)
+		return;
 	UINT16 ilogicVoltage = 0;
 	UINT16 idiodeVoltage = 0;
 	if (!getPowerSupplyVoltages(ilogicVoltage, idiodeVoltage))
@@ -396,6 +436,17 @@ void CLaserInterface2NNDlg::connectAsTCPIPClient(CString csIpAdress, int iPortNu
 
 void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupDisconnect()
 {
+	readWriteLaserActiveParameterSet(WRITE_SETTING);
+
+	m_bConnectResponce = false;
+
+	// Disable "Disconnect" button
+	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(FALSE);
+	
+	// Enable "Connect" button
+	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT)->EnableWindow(TRUE);
+
+
 	// Stop the periodic timer if it's running
 	if (m_nTimerID != 0)
 	{
@@ -413,6 +464,7 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupDisconnect()
 	setLEDLaserOn(0);
 	setLEDLaserEnabled(0);
 	setLEDLaserEmission(0);
+	setLEDMonitor(0);
 	setLEDTaskActive(0);
 
 	// Additional cleanup tasks (resetting any UI or internal variables if necessary)
@@ -444,6 +496,11 @@ void CLaserInterface2NNDlg::disconnectFromTCPIPClient()
 
 UINT CLaserInterface2NNDlg::getBaudRate()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT iBr = 0;
 
 	// Prepare command and arguments
@@ -607,6 +664,11 @@ void CLaserInterface2NNDlg::HandleBaudRateResponse(BYTE response)
 
 UINT CLaserInterface2NNDlg::getLaserInterfaceControlMode()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT iBr = 0;
 
 	// Prepare command and arguments
@@ -638,8 +700,13 @@ UINT CLaserInterface2NNDlg::getLaserInterfaceControlMode()
 	}
 	return iBr;
 }
-bool CLaserInterface2NNDlg::SetLaserInterfaceControlMode(UCHAR mode)
+bool CLaserInterface2NNDlg::SetLaserInterfaceControlMode(UINT16 mode)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Validate the mode argument (should be between 0-7)
 	if (mode > 7)
 	{
@@ -708,6 +775,11 @@ void CLaserInterface2NNDlg::HandleLaserInterfaceControlModeResponse(BYTE respons
 
 UINT CLaserInterface2NNDlg::getLaserControlSignals()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT iBr = 0;
 
 	// Prepare command and arguments
@@ -739,8 +811,13 @@ UINT CLaserInterface2NNDlg::getLaserControlSignals()
 	}
 	return iBr;
 }
-bool CLaserInterface2NNDlg::setLaserControlSignals(uint16_t controlSignals)
+bool CLaserInterface2NNDlg::setLaserControlSignals(UINT16 controlSignals)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Prepare the arguments from the 16-bit control signal
 	unsigned char msb = static_cast<unsigned char>(controlSignals >> 8);   // Most Significant Byte (MSB)
 	unsigned char lsb = static_cast<unsigned char>(controlSignals & 0xFF); // Least Significant Byte (LSB)
@@ -806,6 +883,11 @@ void CLaserInterface2NNDlg::HandleLaserControlSignalsResponse(BYTE response)
 
 UINT CLaserInterface2NNDlg::getAnalogOrActiveSimmerCurrent(BOOL bIsSetSimmerCurrent)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT iBr = 0;
 
 	// Prepare command and arguments
@@ -846,8 +928,13 @@ UINT CLaserInterface2NNDlg::getAnalogOrActiveSimmerCurrent(BOOL bIsSetSimmerCurr
 	}
 	return iBr;
 }
-bool CLaserInterface2NNDlg::setAnalogSimmerCurrent(uint16_t currentValue)
+bool CLaserInterface2NNDlg::setAnalogSimmerCurrent(UINT16 currentValue)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Ensure the currentValue is within valid range (0 to 100 for simmer, 0 to 1000 for active)
 	if (currentValue > 100)
 	{
@@ -905,8 +992,13 @@ bool CLaserInterface2NNDlg::setAnalogSimmerCurrent(uint16_t currentValue)
 		return false;
 	}
 }
-bool CLaserInterface2NNDlg::setAnalogActiveCurrent(uint16_t currentValue)
+bool CLaserInterface2NNDlg::setAnalogActiveCurrent(UINT16 currentValue)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Ensure the currentValue is within valid range (0 to 100 for simmer, 0 to 1000 for active)
 	if (currentValue > 1000)
 	{
@@ -990,50 +1082,13 @@ void CLaserInterface2NNDlg::HandleAnalogCurrentSetPointResponse(BYTE response)
 	}
 }
 
-//std::pair<UINT, UINT> CLaserInterface2NNDlg::getPulseWaveform()
-//{
-//	std::pair<UINT, UINT>pRet;
-//
-//	// Prepare command and arguments
-//	unsigned char command = 0x21; // Command byte for setting RS-232 baud rate
-//	std::vector<unsigned char> arguments; // Array to hold the baud rate arguments
-//	arguments.clear();
-//
-//	// Create and send the packet
-//	std::vector<unsigned char> packet = m_cAKGHWCDummy6Axis.createPacket(command, arguments);
-//	m_cAKGHWCDummy6Axis.DataToSend(packet);
-//
-//	// Wait for a response with a timeout (e.g., 5 seconds)
-//	WaitForData(5000);
-//
-//	// Check if data was received
-//	if (m_cAKGHWCDummy6Axis.m_bDataReceived)
-//	{
-//		if (getCheckSumValidation())
-//		{
-//			//0 Level read correctly
-//			//1 Set point requested does not exist
-//		
-//			pRet.first = m_cAKGHWCDummy6Axis.m_cBuff[6];
-//
-//			pRet.second = m_cAKGHWCDummy6Axis.m_cBuff[7] << 24 | /*MSB*/
-//				m_cAKGHWCDummy6Axis.m_cBuff[8] << 16 |
-//				m_cAKGHWCDummy6Axis.m_cBuff[9] << 8 |
-//				m_cAKGHWCDummy6Axis.m_cBuff[10];/*LSB*/		
-//
-//		}
-//		else
-//			AfxMessageBox(_T("Checksum Validation Error..(gLCS)"));
-//	}
-//	else
-//	{
-//		AfxMessageBox(_T("No response received within the timeout period(gLCS)."));
-//	}
-//	return pRet;
-//}
-
-UINT32 CLaserInterface2NNDlg::getPulseWaveform(UINT16& selectedWaveform)
+UINT CLaserInterface2NNDlg::getPulseWaveform(UINT& selectedWaveform)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Prepare command
 	unsigned char command = 0x21; // Command byte for getting pulse waveform
 
@@ -1092,8 +1147,13 @@ UINT32 CLaserInterface2NNDlg::getPulseWaveform(UINT16& selectedWaveform)
 	}
 }
 
-bool CLaserInterface2NNDlg::setPulseWaveform(uint16_t waveformNumber)
+bool CLaserInterface2NNDlg::setPulseWaveform(UINT16 waveformNumber)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Ensure the waveformNumber is within the valid range (0 to 63)
 	if (waveformNumber > 63)
 	{
@@ -1169,6 +1229,11 @@ void CLaserInterface2NNDlg::HandlePulseWaveformResponse(BYTE response)
 
 UINT CLaserInterface2NNDlg::getPulseRate()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT pRet = 0;
 
 	// Prepare command and arguments
@@ -1203,8 +1268,13 @@ UINT CLaserInterface2NNDlg::getPulseRate()
 	return pRet;
 }
 
-bool CLaserInterface2NNDlg::setPulseRate(uint32_t pulseRate)
+bool CLaserInterface2NNDlg::setPulseRate(UINT32 pulseRate)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Ensure the pulseRate is within the valid range according to the laser settings
 	// Here, we assume that the valid ranges are known and applicable:
 	// 1000 – 1000000 for Pulsed mode
@@ -1292,6 +1362,11 @@ void CLaserInterface2NNDlg::HandlePulseRateResponse(BYTE response)
 
 UINT CLaserInterface2NNDlg::getPulseBurstLength()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT pRet = 0;
 
 	// Prepare command and arguments
@@ -1326,8 +1401,13 @@ UINT CLaserInterface2NNDlg::getPulseBurstLength()
 	return pRet;
 }
 
-bool CLaserInterface2NNDlg::setPulseBurstLength(uint32_t burstLength)
+bool CLaserInterface2NNDlg::setPulseBurstLength(UINT32 burstLength)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Ensure the burstLength is within the valid range (0 to 100000)
 	if (burstLength > 100000)
 	{
@@ -1402,6 +1482,11 @@ void CLaserInterface2NNDlg::HandlePulseBurstLengthResponse(BYTE response)
 
 UINT CLaserInterface2NNDlg::getPumpDutyFactor()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	UINT pRet = 0;
 
 	// Prepare command and arguments
@@ -1434,8 +1519,13 @@ UINT CLaserInterface2NNDlg::getPumpDutyFactor()
 	return pRet;
 }
 
-bool CLaserInterface2NNDlg::setPumpDutyFactor(uint16_t dutyFactor)
+bool CLaserInterface2NNDlg::setPumpDutyFactor(UINT16 dutyFactor)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Ensure the dutyFactor is within the valid range (0 to 1000)
 	if (dutyFactor > 1000)
 	{
@@ -1511,6 +1601,11 @@ void CLaserInterface2NNDlg::HandlePumpDutyFactorResponse(BYTE response)
 
 bool CLaserInterface2NNDlg::setPulseGeneratorParameters(UINT16 waveform, UINT32 pulseRate, UINT32 burstLength, UINT16 dutyFactor)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Validate arguments
 	if (waveform > 63)
 	{
@@ -1611,6 +1706,11 @@ bool CLaserInterface2NNDlg::setPulseGeneratorParameters(UINT16 waveform, UINT32 
 
 bool CLaserInterface2NNDlg::restartPulseGenerator(UINT16 waveform)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Validate argument
 	if (waveform > 63 && waveform != 32768)
 	{
@@ -1680,6 +1780,11 @@ bool CLaserInterface2NNDlg::restartPulseGenerator(UINT16 waveform)
 
 bool CLaserInterface2NNDlg::setLaserDiagnosisState()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Prepare command
 	unsigned char command = 0x60; // Command byte for setting laser into diagnosis state
 
@@ -1839,6 +1944,11 @@ BOOL CLaserInterface2NNDlg::getCheckSumValidation()
 
 UINT32 CLaserInterface2NNDlg::getLaserSerialNumber()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Prepare command
 	unsigned char command = 0x62; // Command byte for getting the laser serial number
 
@@ -1880,6 +1990,11 @@ UINT32 CLaserInterface2NNDlg::getLaserSerialNumber()
 
 CString CLaserInterface2NNDlg::getLaserPartNumber()
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Prepare command
 	unsigned char command = 0x63; // Command byte for getting the laser part number
 
@@ -2031,6 +2146,11 @@ LaserDescription CLaserInterface2NNDlg::getLaserDescription()
 
 bool CLaserInterface2NNDlg::getLaserTemperatures(UINT16& laserTemperature, UINT16& beamDeliveryTemperature)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	laserTemperature = 0;
 	beamDeliveryTemperature = 0;
 
@@ -2070,6 +2190,11 @@ bool CLaserInterface2NNDlg::getLaserTemperatures(UINT16& laserTemperature, UINT1
 
 bool CLaserInterface2NNDlg::getLaserCurrents(UINT16& preAmplifierCurrent, UINT16& powerAmplifierCurrent)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	preAmplifierCurrent = 0;
 	powerAmplifierCurrent = 0;
 
@@ -2109,6 +2234,11 @@ bool CLaserInterface2NNDlg::getLaserCurrents(UINT16& preAmplifierCurrent, UINT16
 
 bool CLaserInterface2NNDlg::getPowerSupplyVoltages(UINT16& logicVoltage, UINT16& diodeVoltage)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	// Initialize the voltages to zero
 	logicVoltage = 0;
 	diodeVoltage = 0;
@@ -2149,6 +2279,11 @@ bool CLaserInterface2NNDlg::getPowerSupplyVoltages(UINT16& logicVoltage, UINT16&
 
 bool CLaserInterface2NNDlg::getLaserCurrents(UINT16& preAmplifierCurrent, UINT16& powerAmplifierCurrent1, UINT16& powerAmplifierCurrent2, UINT16& powerAmplifierCurrent3)
 {
+	if (!m_bConnectResponce)
+	{
+		return false;
+	}
+
 	preAmplifierCurrent = 0;
 	powerAmplifierCurrent1 = 0;
 	powerAmplifierCurrent2 = 0;
@@ -2162,7 +2297,7 @@ bool CLaserInterface2NNDlg::getLaserCurrents(UINT16& preAmplifierCurrent, UINT16
 	std::vector<unsigned char> packet = m_cAKGHWCDummy6Axis.createPacket(command, arguments);
 	m_cAKGHWCDummy6Axis.DataToSend(packet);
 
-	// Wait for a response with a timeout (e.g., 3 seconds)
+	// Wait for a response with a timeout (e.g., 5 seconds)
 	if (!WaitForData(5000))
 		return false;
 
@@ -2194,11 +2329,38 @@ bool CLaserInterface2NNDlg::getLaserCurrents(UINT16& preAmplifierCurrent, UINT16
 
 BOOL CLaserInterface2NNDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: Add your specialized code here and/or call the base class
 	if (pMsg->message >= WM_MOUSEFIRST && pMsg->message <= WM_MOUSELAST)
 	{
 		m_ToolTip.RelayEvent(pMsg);
 	}
+
+	// Determine which control is focused and trigger corresponding logic
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		CWnd* pFocus = GetFocus();
+
+		if (pFocus == GetDlgItem(IDC_EDIT_PRF))
+		{
+			OnEnKillfocusEditPrf();
+			return TRUE;
+		}
+		else if (pFocus == GetDlgItem(IDC_EDIT_ACTIVE))
+		{
+			OnEnKillfocusEditActive();
+			return TRUE;
+		}
+		else if (pFocus == GetDlgItem(IDC_EDIT_SIMMER))
+		{
+			OnEnKillfocusEditSimmer();
+			return TRUE;
+		}
+		else if (pFocus == GetDlgItem(IDC_EDIT_BURST_LENGTH))
+		{
+			OnEnKillfocusEditBurstLength();
+			return TRUE;
+		}
+	}
+
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 
@@ -2317,6 +2479,11 @@ void CLaserInterface2NNDlg::OnCbnSelchangeComboControlMode()
 
 void CLaserInterface2NNDlg::OnCbnSelchangeComboCwPulse()
 {
+	if (!m_bConnectResponce)
+	{
+		return;
+	}
+
 	GetDlgItem(IDC_CW_PULSE_VALUE)->SetWindowText(_T("PULSE"));
 }
 
@@ -2327,9 +2494,8 @@ void CLaserInterface2NNDlg::OnCbnSelchangeComboWaveform()
 	if (!setPulseWaveform(iWaveform))
 		return;
 
-	UINT16 iSetPulseWaveform = static_cast<UINT16>(iWaveform);
-	UINT iBR = getPulseWaveform(iSetPulseWaveform);
-	setReceivedDataFromTheAPS(COMMAND::L_WAVEFORM, iSetPulseWaveform);
+	UINT iBR = getPulseWaveform(iWaveform);
+	setReceivedDataFromTheAPS(COMMAND::L_WAVEFORM, iWaveform);
 	setReceivedDataFromTheAPS(COMMAND::L_PRF0, iBR);
 }
 
@@ -2369,6 +2535,10 @@ void CLaserInterface2NNDlg::OnEnKillfocusEditSimmer()
 	setReceivedDataFromTheAPS(COMMAND::L_SIMMER, iBR);
 }
 
+void CLaserInterface2NNDlg::DutyFactor()
+{
+	OnEnKillfocusEditDutyFactor();
+}
 
 void CLaserInterface2NNDlg::OnEnKillfocusEditDutyFactor()
 {
@@ -2395,9 +2565,20 @@ void CLaserInterface2NNDlg::OnEnKillfocusEditBurstLength()
 	setReceivedDataFromTheAPS(COMMAND::L_BL, iBR);
 }
 
+void CLaserInterface2NNDlg::setStandby()
+{
+	OnBnClickedButtonStandby();
+}
 
 void CLaserInterface2NNDlg::OnBnClickedButtonStandby()
 {
+	m_bEnableOn = false;
+
+	if (!m_bConnectResponce)
+	{
+		return;
+	}
+
 	if (!setLaserControlSignals(0))
 		return;
 
@@ -2423,9 +2604,20 @@ void CLaserInterface2NNDlg::OnBnClickedButtonStandby()
 	GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(FALSE);
 }
 
+void CLaserInterface2NNDlg::setEnable()
+{
+	OnBnClickedButtonEnable();
+}
 
 void CLaserInterface2NNDlg::OnBnClickedButtonEnable()
 {
+	m_bEnableOn = true;
+
+	if (!m_bConnectResponce)
+	{
+		return;
+	}
+
 	if (!setLaserControlSignals(1))
 		return;
 
@@ -2451,9 +2643,18 @@ void CLaserInterface2NNDlg::OnBnClickedButtonEnable()
 	GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(TRUE);
 }
 
+void CLaserInterface2NNDlg::setTrigger()
+{
+	OnBnClickedButtonTrigger();
+}
 
 void CLaserInterface2NNDlg::OnBnClickedButtonTrigger()
 {
+	if (!m_bConnectResponce)
+	{
+		return;
+	}
+
 	UINT iWaveform = m_ctrlWaveform.GetCurSel();
 	if (!restartPulseGenerator(iWaveform))
 		return;
@@ -2473,13 +2674,30 @@ void CLaserInterface2NNDlg::OnBnClickedButtonTrigger()
 	}
 }
 
+void CLaserInterface2NNDlg::setRalOn()
+{
+	OnBnClickedButtonRalOn();
+}
 
 void CLaserInterface2NNDlg::OnBnClickedButtonRalOn()
 {
+	if (!m_bConnectResponce)
+	{
+		return;
+	}
+
 	if (m_bRalOn)
 	{
-		if (!setLaserControlSignals(0))
-			return;
+		if (m_bEnableOn)
+		{
+			if (!setLaserControlSignals(1))
+				return;
+		}
+		else
+		{
+			if (!setLaserControlSignals(0))
+				return;
+		}
 
 		// If currently "RAL ON", change to "RAL OFF"
 		GetDlgItem(IDC_BUTTON_RAL_ON)->SetWindowText(_T("RAL OFF"));
@@ -2526,7 +2744,14 @@ void CLaserInterface2NNDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	if (nIDEvent == 1)
 	{
-		UpdateLaserData();
+		KillTimer(m_nTimerID);
+		m_nTimerID = 0;
+
+		if(m_cAKGHWCDummy6Axis.m_bTimerPause==0)
+			UpdateLaserData();
+			
+		// Start a timer to periodically update the data
+		m_nTimerID = SetTimer(1, 500, nullptr);  // Timer ID = 1, Interval = 500 ms (0.5 second)
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
@@ -2535,6 +2760,11 @@ void CLaserInterface2NNDlg::OnTimer(UINT_PTR nIDEvent)
 
 void CLaserInterface2NNDlg::OnClose()
 {
+	readWriteLaserActiveParameterSet(WRITE_SETTING);
+
+	m_bConnectResponce = false;
+
+
 	if (m_nTimerID != 0)
 	{
 		KillTimer(m_nTimerID);
@@ -2550,6 +2780,8 @@ void CLaserInterface2NNDlg::OnClose()
 void CLaserInterface2NNDlg::OnCancel()
 {
 	// TODO: Add your specialized code here and/or call the base class
+
+	m_bConnectResponce = false;
 
 	CDialogEx::OnCancel();
 }
@@ -2675,3 +2907,50 @@ HBRUSH CLaserInterface2NNDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hBrush;
 }
 
+void CLaserInterface2NNDlg::readWriteLaserActiveParameterSet(BOOL bIsReading)
+{
+	CString sSection = _T("LaserActiveParameterSet");
+	m_IniReadWritePrm.setINIFileName(ACTIVEPARAMETERSET_FILE_PATH);
+
+	if (bIsReading)
+	{
+		m_csLaserIPAddress = m_IniReadWritePrm.ReadString(_T("IPAddress"), sSection, _T("192.168.101.22"));
+		m_iPort = m_IniReadWritePrm.ReadInt(_T("Port"), sSection, 58174);
+		if (m_bConnectResponce)
+		{
+			m_csSetControlMode = m_IniReadWritePrm.ReadString(_T("ControlMode"), sSection, 0);
+			m_csSetCWPulse = m_IniReadWritePrm.ReadString(_T("CWPulse"), sSection, 0);
+			m_csSetWaveform = m_IniReadWritePrm.ReadString(_T("Waveform"), sSection, 0);
+			m_csSetPRF = m_IniReadWritePrm.ReadString(_T("PRF"), sSection, 0);
+			//m_csSetPRF0 = m_IniReadWritePrm.ReadString(_T("PRF0"), sSection, 0);
+			m_csSetActive = m_IniReadWritePrm.ReadString(_T("Active"), sSection, 0);
+			m_csSetSimmer = m_IniReadWritePrm.ReadString(_T("Simmer"), sSection, 0);
+			m_csSetDutyFactor = m_IniReadWritePrm.ReadString(_T("DutyFactor"), sSection, 0);
+			m_csSetBurstLength = m_IniReadWritePrm.ReadString(_T("BurstLength"), sSection, 0);
+		}
+
+		//GetSetDataFromRadioAndCheckBox(TRUE);  // Set controls based on data
+		UpdateData(FALSE);  // Update dialog controls with new data
+	}
+	else
+	{
+		UpdateData(TRUE);  // Get current data from controls
+		//GetSetDataFromRadioAndCheckBox(FALSE); // Get checkbox and radio states
+
+		// Writing settings to the INI file
+		m_IniReadWritePrm.WriteString(_T("IPAddress"), sSection, m_csLaserIPAddress);
+		m_IniReadWritePrm.WriteInt(_T("Port"), sSection, m_iPort);
+		if (m_bConnectResponce)
+		{
+			m_IniReadWritePrm.WriteString(_T("ControlMode"), sSection, m_csSetControlMode);
+			m_IniReadWritePrm.WriteString(_T("CWPulse"), sSection, m_csSetCWPulse);
+			m_IniReadWritePrm.WriteString(_T("Waveform"), sSection, m_csSetWaveform);
+			m_IniReadWritePrm.WriteString(_T("PRF"), sSection, m_csSetPRF);
+			//m_IniReadWritePrm.WriteString(_T("PRF0"), sSection, m_csSetPRF0);
+			m_IniReadWritePrm.WriteString(_T("Active"), sSection, m_csSetActive);
+			m_IniReadWritePrm.WriteString(_T("Simmer"), sSection, m_csSetSimmer);
+			m_IniReadWritePrm.WriteString(_T("DutyFactor"), sSection, m_csSetDutyFactor);
+			m_IniReadWritePrm.WriteString(_T("BurstLength"), sSection, m_csSetBurstLength);
+		}
+	}
+}

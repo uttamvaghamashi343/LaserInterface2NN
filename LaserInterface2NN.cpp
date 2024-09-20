@@ -27,6 +27,11 @@ CLaserInterface2NNApp::CLaserInterface2NNApp()
 	// Place all significant initialization in InitInstance
 }
 
+CLaserInterface2NNApp::~CLaserInterface2NNApp()
+{
+
+}
+
 
 // The one and only CLaserInterface2NNApp object
 

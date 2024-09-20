@@ -4,9 +4,9 @@
 //
 #define IDD_LASERINTERFACE2NN_DIALOG    102
 #define IDR_MAINFRAME                   128
-#define IDB_BITMAP_LEDGRAY                     130
-#define IDB_BITMAP_LEDRED                     131
-#define IDB_BITMAP_LEDYELLOW                     132
+#define IDB_BITMAP_LEDGRAY              130
+#define IDB_BITMAP_LEDRED               131
+#define IDB_BITMAP_LEDYELLOW            132
 #define IDC_BUTTON_TRUPULSE_SET_BAUD_RATES 1000
 #define IDC_EDIT_TRUPULSE_SET_BAUD_RATES 1001
 #define IDC_EDIT_TRUPULSE_SET_LASER_INTERFACE_CONTROL_MODE 1002
