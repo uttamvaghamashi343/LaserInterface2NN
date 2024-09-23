@@ -65,9 +65,9 @@ CLaserInterface2NNDlg::~CLaserInterface2NNDlg()
 void CLaserInterface2NNDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EDIT_ILM_TEST_ETHERNET_SETUP_LASER_IP, m_EditLaserIPAdd);
-	DDX_Text(pDX, IDC_EDIT_ILM_TEST_ETHERNET_SETUP_LASER_IP, m_csLaserIPAddress);
-	DDX_Text(pDX, IDC_EDIT_ILM_TEST_ETHERNET_SETUP_PORT, m_iPort);
+	DDX_Control(pDX, IDC_EDIT_TRUPULSENANO_SETUP_LASER_IP, m_EditLaserIPAdd);
+	DDX_Text(pDX, IDC_EDIT_TRUPULSENANO_SETUP_LASER_IP, m_csLaserIPAddress);
+	DDX_Text(pDX, IDC_EDIT_TRUPULSENANO_SETUP_PORT, m_iPort);
 	DDX_Text(pDX, IDC_STATIC_LASER_CONTROL_VALUE, m_csLaserControl);
 	DDX_Control(pDX, IDC_STATIC_PULSE_GENERATION_VALUE, m_csPulseGeneration);
 	DDX_Text(pDX, IDC_STATIC_CURRENT_CONTROL_VALUE, m_csCurrentControl);
@@ -99,11 +99,11 @@ void CLaserInterface2NNDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SIMMER_VALUE, m_csGetSimmer);
 	DDX_Text(pDX, IDC_DUTY_FACTOR_VALUE, m_csGetDutyFactor);
 	DDX_Text(pDX, IDC_BURST_LENGTH_VALUE, m_csGetBurstLength);
-	DDX_Control(pDX, IDC_SPIN_PRF, m_ctrlSpinPRF);
-	DDX_Control(pDX, IDC_SPIN_ACTIVE, m_ctrlSpinActive);
-	DDX_Control(pDX, IDC_SPIN_SIMMER, m_ctrlSpinSimmer);
-	DDX_Control(pDX, IDC_SPIN_DUTY_FACTOR, m_ctrlSpinDutyFactor);
-	DDX_Control(pDX, IDC_SPIN_BURST_LENGTH, m_ctrlSpinBurstLength);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_PRF, m_ctrlSpinPRF);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_ACTIVE, m_ctrlSpinActive);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_SIMMER, m_ctrlSpinSimmer);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_DUTY_FACTOR, m_ctrlSpinDutyFactor);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_BURST_LENGTH, m_ctrlSpinBurstLength);
 	DDX_Control(pDX, IDC_STATIC_PICTURE_TRUPULSENANO_LASER_ON, m_ctrlLaserOn);
 	DDX_Control(pDX, IDC_STATIC_PICTURE_TRUPULSENANO_LASER_ENABLED, m_ctrlLaserEnabled);
 	DDX_Control(pDX, IDC_STATIC_PICTURE_TRUPULSENANO_LASER_DISABLED, m_ctrlLaserDisabled);
@@ -124,13 +124,13 @@ void CLaserInterface2NNDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CLaserInterface2NNDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT, &CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect)
-	ON_BN_CLICKED(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT, &CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupDisconnect)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PRF, &CLaserInterface2NNDlg::OnDeltaposSpinPrf)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ACTIVE, &CLaserInterface2NNDlg::OnDeltaposSpinActive)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_SIMMER, &CLaserInterface2NNDlg::OnDeltaposSpinSimmer)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_DUTY_FACTOR, &CLaserInterface2NNDlg::OnDeltaposSpinDutyFactor)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_BURST_LENGTH, &CLaserInterface2NNDlg::OnDeltaposSpinBurstLength)
+	ON_BN_CLICKED(IDC_BUTTON_TRUPULSENANO_SETUP_CONNECT, &CLaserInterface2NNDlg::OnBnClickedButtonTruPulseNanoSetupConnect)
+	ON_BN_CLICKED(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT, &CLaserInterface2NNDlg::OnBnClickedButtonTruPulseNanoSetupDisconnect)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_PRF, &CLaserInterface2NNDlg::OnDeltaposSpinPrf)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_ACTIVE, &CLaserInterface2NNDlg::OnDeltaposSpinActive)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_SIMMER, &CLaserInterface2NNDlg::OnDeltaposSpinSimmer)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_DUTY_FACTOR, &CLaserInterface2NNDlg::OnDeltaposSpinDutyFactor)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_BURST_LENGTH, &CLaserInterface2NNDlg::OnDeltaposSpinBurstLength)
 	ON_CBN_SELCHANGE(IDC_COMBO_CONTROL_MODE, &CLaserInterface2NNDlg::OnCbnSelchangeComboControlMode)
 	ON_CBN_SELCHANGE(IDC_COMBO_CW_PULSE, &CLaserInterface2NNDlg::OnCbnSelchangeComboCwPulse)
 	ON_CBN_SELCHANGE(IDC_COMBO_WAVEFORM, &CLaserInterface2NNDlg::OnCbnSelchangeComboWaveform)
@@ -190,7 +190,7 @@ BOOL CLaserInterface2NNDlg::OnInitDialog()
 	readWriteLaserActiveParameterSet(READ_SETTING);
 
 	// Disable "Disconnect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT)->EnableWindow(FALSE);
 
 	// Initialize brushes
 	m_brushRed.CreateSolidBrush(RGB(255, 0, 0));   // Red color
@@ -241,8 +241,19 @@ HCURSOR CLaserInterface2NNDlg::OnQueryDragIcon()
 
 void CLaserInterface2NNDlg::CreateDlg(CWnd* pParent, CRect cDlgRect)
 {
+	// Create the dialog
 	Create(IDD_LASERINTERFACE2NN_DIALOG, pParent);
-	SetWindowPos(NULL, cDlgRect.left, cDlgRect.top, cDlgRect.right, cDlgRect.bottom, SWP_HIDEWINDOW);
+
+	// Get parent window size if needed for auto-resizing
+	CRect parentRect;
+	pParent->GetClientRect(parentRect);
+
+	// Calculate width and height based on the parent (optional)
+	int width = cDlgRect.Width();
+	int height = cDlgRect.Height();
+
+	// Set the position and size of the dialog
+	SetWindowPos(NULL, 0, 0, width, height, SWP_SHOWWINDOW);
 }
 
 void CLaserInterface2NNDlg::fillComboBoxAndControlBox()
@@ -326,7 +337,7 @@ void CLaserInterface2NNDlg::setTooltipForControl()
 	m_ToolTip.AddTool(GetDlgItem(IDC_EDIT_BURST_LENGTH), _T("Max = 1000000, Min = 0"));
 }
 
-void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
+void CLaserInterface2NNDlg::OnBnClickedButtonTruPulseNanoSetupConnect()
 {
 	/*static BOOL bFirstTime = TRUE;
 	if (bFirstTime)
@@ -350,16 +361,16 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
 	if (m_bConnectResponce)
 	{
 		// Disable "Connect" button
-		GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_CONNECT)->EnableWindow(FALSE);
 	}
 	
 	// Enable "Disconnect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(TRUE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT)->EnableWindow(TRUE);
 	
 
 	if (m_bConnectResponce)
 	{
-		GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connected"));
+		GetDlgItem(IDC_EDIT_TRUPULSENANO_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connected"));
 
 		readWriteLaserActiveParameterSet(READ_SETTING);
 
@@ -371,12 +382,21 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
 
 		setLEDLaserEmission(1);
 
-		OnBnClickedButtonStandby();
+		if (m_bEnableOn)
+		{
+			OnBnClickedButtonEnable();
+		}
+		else
+		{
+			OnBnClickedButtonStandby();
+		}
+
+		setGetActiveParameterSet();
 
 	}
 	else
 	{
-		GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connection Fail"));
+		GetDlgItem(IDC_EDIT_TRUPULSENANO_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connection Fail"));
 
 		// Stop the timer if the connection fails
 		if (m_nTimerID != 0)
@@ -385,8 +405,6 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupConnect()
 			m_nTimerID = 0;
 		}
 	}
-
-	UpdateData(FALSE);
 
 }
 
@@ -434,17 +452,17 @@ void CLaserInterface2NNDlg::connectAsTCPIPClient(CString csIpAdress, int iPortNu
 	m_cAKGHWCDummy6Axis.ConnectToServer(csIpAdress, iPortNum, FALSE);
 }
 
-void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupDisconnect()
+void CLaserInterface2NNDlg::OnBnClickedButtonTruPulseNanoSetupDisconnect()
 {
 	readWriteLaserActiveParameterSet(WRITE_SETTING);
 
 	m_bConnectResponce = false;
 
 	// Disable "Disconnect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT)->EnableWindow(FALSE);
 	
 	// Enable "Connect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT)->EnableWindow(TRUE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_CONNECT)->EnableWindow(TRUE);
 
 
 	// Stop the periodic timer if it's running
@@ -458,7 +476,7 @@ void CLaserInterface2NNDlg::OnBnClickedButtonIlmTestEthernetSetupDisconnect()
 	disconnectFromTCPIPClient();
 
 	// Update UI to show disconnection
-	GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Disconnected"));
+	GetDlgItem(IDC_EDIT_TRUPULSENANO_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Disconnected"));
 
 	// Optional: Set any LED or state indicators to off
 	setLEDLaserOn(0);
@@ -700,12 +718,13 @@ UINT CLaserInterface2NNDlg::getLaserInterfaceControlMode()
 	}
 	return iBr;
 }
-bool CLaserInterface2NNDlg::SetLaserInterfaceControlMode(UINT16 mode)
+bool CLaserInterface2NNDlg::setLaserInterfaceControlMode(UINT16 mode)
 {
 	if (!m_bConnectResponce)
 	{
 		return false;
 	}
+
 
 	// Validate the mode argument (should be between 0-7)
 	if (mode > 7)
@@ -2469,7 +2488,7 @@ void CLaserInterface2NNDlg::OnDeltaposSpinBurstLength(NMHDR* pNMHDR, LRESULT* pR
 void CLaserInterface2NNDlg::OnCbnSelchangeComboControlMode()
 {
 	UINT iControlMode = m_ctrlControlMode.GetCurSel();
-	if (!SetLaserInterfaceControlMode(iControlMode))
+	if (!setLaserInterfaceControlMode(iControlMode))
 		return;
 
 	UINT iBR = getLaserInterfaceControlMode();
@@ -2535,11 +2554,6 @@ void CLaserInterface2NNDlg::OnEnKillfocusEditSimmer()
 	setReceivedDataFromTheAPS(COMMAND::L_SIMMER, iBR);
 }
 
-void CLaserInterface2NNDlg::DutyFactor()
-{
-	OnEnKillfocusEditDutyFactor();
-}
-
 void CLaserInterface2NNDlg::OnEnKillfocusEditDutyFactor()
 {
 	UpdateData();
@@ -2565,19 +2579,16 @@ void CLaserInterface2NNDlg::OnEnKillfocusEditBurstLength()
 	setReceivedDataFromTheAPS(COMMAND::L_BL, iBR);
 }
 
-void CLaserInterface2NNDlg::setStandby()
-{
-	OnBnClickedButtonStandby();
-}
-
 void CLaserInterface2NNDlg::OnBnClickedButtonStandby()
 {
-	m_bEnableOn = false;
-
 	if (!m_bConnectResponce)
 	{
 		return;
 	}
+
+	m_bEnableOn = false;
+
+	GetDlgItem(IDC_COMBO_CONTROL_MODE)->ShowWindow(SW_SHOW);
 
 	if (!setLaserControlSignals(0))
 		return;
@@ -2604,19 +2615,16 @@ void CLaserInterface2NNDlg::OnBnClickedButtonStandby()
 	GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(FALSE);
 }
 
-void CLaserInterface2NNDlg::setEnable()
-{
-	OnBnClickedButtonEnable();
-}
-
 void CLaserInterface2NNDlg::OnBnClickedButtonEnable()
 {
-	m_bEnableOn = true;
-
 	if (!m_bConnectResponce)
 	{
 		return;
 	}
+
+	m_bEnableOn = true;
+
+	GetDlgItem(IDC_COMBO_CONTROL_MODE)->ShowWindow(SW_HIDE);
 
 	if (!setLaserControlSignals(1))
 		return;
@@ -2643,11 +2651,6 @@ void CLaserInterface2NNDlg::OnBnClickedButtonEnable()
 	GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(TRUE);
 }
 
-void CLaserInterface2NNDlg::setTrigger()
-{
-	OnBnClickedButtonTrigger();
-}
-
 void CLaserInterface2NNDlg::OnBnClickedButtonTrigger()
 {
 	if (!m_bConnectResponce)
@@ -2672,11 +2675,6 @@ void CLaserInterface2NNDlg::OnBnClickedButtonTrigger()
 	{
 		setLEDTaskActive(0);
 	}
-}
-
-void CLaserInterface2NNDlg::setRalOn()
-{
-	OnBnClickedButtonRalOn();
 }
 
 void CLaserInterface2NNDlg::OnBnClickedButtonRalOn()
@@ -2918,24 +2916,20 @@ void CLaserInterface2NNDlg::readWriteLaserActiveParameterSet(BOOL bIsReading)
 		m_iPort = m_IniReadWritePrm.ReadInt(_T("Port"), sSection, 58174);
 		if (m_bConnectResponce)
 		{
-			m_csSetControlMode = m_IniReadWritePrm.ReadString(_T("ControlMode"), sSection, 0);
-			m_csSetCWPulse = m_IniReadWritePrm.ReadString(_T("CWPulse"), sSection, 0);
-			m_csSetWaveform = m_IniReadWritePrm.ReadString(_T("Waveform"), sSection, 0);
-			m_csSetPRF = m_IniReadWritePrm.ReadString(_T("PRF"), sSection, 0);
+			m_csSetControlMode = m_IniReadWritePrm.ReadString(_T("ControlMode"), sSection, _T("0"));
+			m_csSetCWPulse = m_IniReadWritePrm.ReadString(_T("CWPulse"), sSection, _T("Pulse"));
+			m_csSetWaveform = m_IniReadWritePrm.ReadString(_T("Waveform"), sSection, _T("33"));
+			m_csSetPRF = m_IniReadWritePrm.ReadString(_T("PRF"), sSection, _T("60000"));
 			//m_csSetPRF0 = m_IniReadWritePrm.ReadString(_T("PRF0"), sSection, 0);
-			m_csSetActive = m_IniReadWritePrm.ReadString(_T("Active"), sSection, 0);
-			m_csSetSimmer = m_IniReadWritePrm.ReadString(_T("Simmer"), sSection, 0);
-			m_csSetDutyFactor = m_IniReadWritePrm.ReadString(_T("DutyFactor"), sSection, 0);
-			m_csSetBurstLength = m_IniReadWritePrm.ReadString(_T("BurstLength"), sSection, 0);
+			m_csSetActive = m_IniReadWritePrm.ReadString(_T("Active"), sSection, _T("600"));
+			m_csSetSimmer = m_IniReadWritePrm.ReadString(_T("Simmer"), sSection, _T("50"));
+			m_csSetBurstLength = m_IniReadWritePrm.ReadString(_T("BurstLength"), sSection, _T("70000"));
+			m_bEnableOn = m_IniReadWritePrm.ReadInt(_T("EnableOn"), sSection, 0);
 		}
-
-		//GetSetDataFromRadioAndCheckBox(TRUE);  // Set controls based on data
-		UpdateData(FALSE);  // Update dialog controls with new data
 	}
 	else
 	{
 		UpdateData(TRUE);  // Get current data from controls
-		//GetSetDataFromRadioAndCheckBox(FALSE); // Get checkbox and radio states
 
 		// Writing settings to the INI file
 		m_IniReadWritePrm.WriteString(_T("IPAddress"), sSection, m_csLaserIPAddress);
@@ -2949,8 +2943,111 @@ void CLaserInterface2NNDlg::readWriteLaserActiveParameterSet(BOOL bIsReading)
 			//m_IniReadWritePrm.WriteString(_T("PRF0"), sSection, m_csSetPRF0);
 			m_IniReadWritePrm.WriteString(_T("Active"), sSection, m_csSetActive);
 			m_IniReadWritePrm.WriteString(_T("Simmer"), sSection, m_csSetSimmer);
-			m_IniReadWritePrm.WriteString(_T("DutyFactor"), sSection, m_csSetDutyFactor);
 			m_IniReadWritePrm.WriteString(_T("BurstLength"), sSection, m_csSetBurstLength);
+			m_IniReadWritePrm.WriteInt(_T("EnableOn"), sSection, m_bEnableOn);
 		}
 	}
+}
+
+void CLaserInterface2NNDlg::setGetActiveParameterSet()
+{
+	setGetLaserInterfaceControlMode(_ttoi(m_csSetControlMode));
+	GetDlgItem(IDC_CW_PULSE_VALUE)->SetWindowText(_T("PULSE"));
+	setGetPulseWaveform(_ttoi(m_csSetWaveform));
+	setGetPulseRate(_ttoi(m_csSetPRF));
+	setGetAnalogActiveCurrent(_ttoi(m_csSetActive));
+	setGetAnalogSimmerCurrent(_ttoi(m_csSetSimmer));
+	setGetPulseBurstLength(_ttoi(m_csSetBurstLength));
+}
+
+bool CLaserInterface2NNDlg::setGetLaserInterfaceControlMode(UINT16 mode)
+{
+	if (!setLaserInterfaceControlMode(mode))
+		return false;
+	m_ctrlControlMode.SetCurSel(_ttoi(m_csSetControlMode));
+
+	UINT iBR = getLaserInterfaceControlMode();
+	setReceivedDataFromTheAPS(COMMAND::L_CM, iBR);
+}
+
+bool CLaserInterface2NNDlg::setGetPulseWaveform(UINT16 waveformNumber)
+{
+	if (!setPulseWaveform(waveformNumber))
+		return false;
+	m_ctrlWaveform.SetCurSel(_ttoi(m_csSetWaveform));
+
+	UINT selectedWaveform;
+	UINT iBR = getPulseWaveform(selectedWaveform);
+	setReceivedDataFromTheAPS(COMMAND::L_WAVEFORM, selectedWaveform);
+	setReceivedDataFromTheAPS(COMMAND::L_PRF0, iBR);
+}
+
+bool CLaserInterface2NNDlg::setGetPulseRate(UINT32 pulseRate)
+{
+	if (!setPulseRate(pulseRate))
+		return false;
+	GetDlgItem(IDC_EDIT_PRF)->SetWindowText(m_csSetPRF);
+
+	UINT iBR = getPulseRate();
+	setReceivedDataFromTheAPS(COMMAND::L_PRF, iBR);
+}
+
+bool CLaserInterface2NNDlg::setGetAnalogActiveCurrent(UINT16 currentValue)
+{
+	if (!setAnalogActiveCurrent(currentValue))
+		return false;
+	GetDlgItem(IDC_EDIT_ACTIVE)->SetWindowText(m_csSetActive);
+
+	UINT iBR = getAnalogOrActiveSimmerCurrent(0);
+	setReceivedDataFromTheAPS(COMMAND::L_ACTIVE, iBR);
+}
+
+bool CLaserInterface2NNDlg::setGetAnalogSimmerCurrent(UINT16 currentValue)
+{
+	if (!setAnalogSimmerCurrent(currentValue))
+		return false;
+	GetDlgItem(IDC_EDIT_SIMMER)->SetWindowText(m_csSetSimmer);
+
+	UINT iBR = getAnalogOrActiveSimmerCurrent(1);
+	setReceivedDataFromTheAPS(COMMAND::L_SIMMER, iBR);
+}
+
+bool CLaserInterface2NNDlg::setGetPumpDutyFactor(UINT16 dutyFactor)
+{
+	if (!setPumpDutyFactor(dutyFactor * 10))
+		return false;
+	GetDlgItem(IDC_EDIT_DUTY_FACTOR)->SetWindowText(m_csSetDutyFactor);
+
+	UINT iBR = getPumpDutyFactor();
+	setReceivedDataFromTheAPS(COMMAND::L_DF, iBR);
+}
+
+bool CLaserInterface2NNDlg::setGetPulseBurstLength(UINT32 burstLength)
+{
+	if (!setPulseBurstLength(burstLength))
+		return false;
+	GetDlgItem(IDC_EDIT_BURST_LENGTH)->SetWindowText(m_csSetBurstLength);
+
+	UINT iBR = getPulseBurstLength();
+	setReceivedDataFromTheAPS(COMMAND::L_BL, iBR);
+}
+
+void CLaserInterface2NNDlg::setStandby()
+{
+	OnBnClickedButtonStandby();
+}
+
+void CLaserInterface2NNDlg::setEnable()
+{
+	OnBnClickedButtonEnable();
+}
+
+void CLaserInterface2NNDlg::setTrigger()
+{
+	OnBnClickedButtonTrigger();
+}
+
+void CLaserInterface2NNDlg::setRalOn()
+{
+	OnBnClickedButtonRalOn();
 }
