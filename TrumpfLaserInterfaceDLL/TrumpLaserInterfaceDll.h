@@ -175,16 +175,16 @@ public:
 	void CreateDlg(CWnd* pParent, CRect cDlgRect);
 	void fillComboBoxAndControlBox();
 	void setTooltipForControl();
-	afx_msg void OnBnClickedButtonIlmTestEthernetSetupConnect();
+	afx_msg void OnBnClickedButtonTruPulseNanoSetupConnect();
 	void UpdateLaserData();
-	afx_msg void OnBnClickedButtonIlmTestEthernetSetupDisconnect();
+	afx_msg void OnBnClickedButtonTruPulseNanoSetupDisconnect();
 	void connectAsTCPIPClient(CString csIpAdress, int iPortNum);
 	void disconnectFromTCPIPClient();
 
 	bool setBaudRate(UINT32 baudRate);
 	void HandleBaudRateResponse(BYTE response);
 
-	bool SetLaserInterfaceControlMode(UINT16 mode);
+	bool setLaserInterfaceControlMode(UINT16 mode);
 	void HandleLaserInterfaceControlModeResponse(BYTE response);
 
 	bool setLaserControlSignals(UINT16 controlSignals);
@@ -229,6 +229,7 @@ public:
 	afx_msg void OnDeltaposSpinSimmer(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinDutyFactor(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpinBurstLength(NMHDR* pNMHDR, LRESULT* pResult);
+	
 	afx_msg void OnCbnSelchangeComboControlMode();
 	afx_msg void OnCbnSelchangeComboCwPulse();
 	afx_msg void OnCbnSelchangeComboWaveform();
@@ -237,19 +238,32 @@ public:
 	afx_msg void OnEnKillfocusEditSimmer();
 	afx_msg void OnEnKillfocusEditDutyFactor();
 	afx_msg void OnEnKillfocusEditBurstLength();
-	void setStandby();
+	
 	afx_msg void OnBnClickedButtonStandby();
-	void setEnable();
 	afx_msg void OnBnClickedButtonEnable();
-	void setTrigger();
 	afx_msg void OnBnClickedButtonTrigger();
-	void setRalOn();
 	afx_msg void OnBnClickedButtonRalOn();
+
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnClose();
 	virtual void OnCancel();
 	virtual void OnOK();
 	HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	void readWriteLaserActiveParameterSet(BOOL bIsReading);
+
+	void setGetActiveParameterSet();
+
+	bool setGetLaserInterfaceControlMode(UINT16 mode);
+	bool setGetPulseWaveform(UINT16 waveformNumber);
+	bool setGetPulseRate(UINT32 pulseRate);
+	bool setGetAnalogActiveCurrent(UINT16 currentValue);
+	bool setGetAnalogSimmerCurrent(UINT16 currentValue);
+	bool setGetPumpDutyFactor(UINT16 dutyFactor);
+	bool setGetPulseBurstLength(UINT32 burstLength);
+
+	void setStandby();
+	void setEnable();
+	void setTrigger();
+	void setRalOn();
 
 };

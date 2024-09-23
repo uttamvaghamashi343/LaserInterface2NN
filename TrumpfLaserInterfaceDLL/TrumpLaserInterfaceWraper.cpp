@@ -20,13 +20,9 @@ bool CTrumpLaserInterfaceWraper::setBaudRate(UINT32 baudRate)
     return glbTrumpLaserInterfaceDll.setBaudRate(baudRate);
 }
 
-bool CTrumpLaserInterfaceWraper::SetLaserInterfaceControlMode(UINT16 mode)
+bool CTrumpLaserInterfaceWraper::setLaserInterfaceControlMode(UINT16 mode)
 {
-    if (!glbTrumpLaserInterfaceDll.SetLaserInterfaceControlMode(mode))
-        return false;
-
-    UINT iBR = glbTrumpLaserInterfaceDll.getLaserInterfaceControlMode();
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_CM, iBR);
+    return glbTrumpLaserInterfaceDll.setGetLaserInterfaceControlMode(mode);
 }
 
 bool CTrumpLaserInterfaceWraper::setLaserControlSignals(UINT16 controlSignals)
@@ -34,60 +30,34 @@ bool CTrumpLaserInterfaceWraper::setLaserControlSignals(UINT16 controlSignals)
     return glbTrumpLaserInterfaceDll.setLaserControlSignals(controlSignals);
 }
 
-bool CTrumpLaserInterfaceWraper::setAnalogActiveCurrent(UINT16 currentValue)
-{
-    if (!glbTrumpLaserInterfaceDll.setAnalogActiveCurrent(currentValue))
-        return false;
-
-    UINT iBR = glbTrumpLaserInterfaceDll.getAnalogOrActiveSimmerCurrent(0);
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_ACTIVE, iBR);
-}
-
-bool CTrumpLaserInterfaceWraper::setAnalogSimmerCurrent(UINT16 currentValue)
-{
-    if (!glbTrumpLaserInterfaceDll.setAnalogSimmerCurrent(currentValue))
-        return false;
-
-    UINT iBR = glbTrumpLaserInterfaceDll.getAnalogOrActiveSimmerCurrent(1);
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_SIMMER, iBR);
-}
-
 bool CTrumpLaserInterfaceWraper::setPulseWaveform(UINT16 waveformNumber)
 {
-    if (!glbTrumpLaserInterfaceDll.setPulseWaveform(waveformNumber))
-        return false;
-
-    UINT selectedWaveform;
-    UINT iBR = glbTrumpLaserInterfaceDll.getPulseWaveform(selectedWaveform);
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_WAVEFORM, selectedWaveform);
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_PRF0, iBR);
+    return glbTrumpLaserInterfaceDll.setGetPulseWaveform(waveformNumber);
 }
 
 bool CTrumpLaserInterfaceWraper::setPulseRate(UINT32 pulseRate)
 {
-    if (!glbTrumpLaserInterfaceDll.setPulseRate(pulseRate))
-        return false;
-
-    UINT iBR = glbTrumpLaserInterfaceDll.getPulseRate();
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_PRF, iBR);
+    return glbTrumpLaserInterfaceDll.setGetPulseRate(pulseRate);
 }
 
-bool CTrumpLaserInterfaceWraper::setPulseBurstLength(UINT32 burstLength)
+bool CTrumpLaserInterfaceWraper::setAnalogActiveCurrent(UINT16 currentValue)
 {
-    if (!glbTrumpLaserInterfaceDll.setPulseBurstLength(burstLength))
-        return false;
+    return glbTrumpLaserInterfaceDll.setGetAnalogActiveCurrent(currentValue);
+}
 
-    UINT iBR = glbTrumpLaserInterfaceDll.getPulseBurstLength();
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_BL, iBR);
+bool CTrumpLaserInterfaceWraper::setAnalogSimmerCurrent(UINT16 currentValue)
+{
+    return glbTrumpLaserInterfaceDll.setGetAnalogSimmerCurrent(currentValue);
 }
 
 bool CTrumpLaserInterfaceWraper::setPumpDutyFactor(UINT16 dutyFactor)
 {
-    if (!glbTrumpLaserInterfaceDll.setPumpDutyFactor(dutyFactor*10))
-        return false;
+    return glbTrumpLaserInterfaceDll.setGetPumpDutyFactor(dutyFactor);
+}
 
-    UINT iBR = glbTrumpLaserInterfaceDll.getPumpDutyFactor();
-    glbTrumpLaserInterfaceDll.setReceivedDataFromTheAPS(COMMAND::L_DF, iBR);
+bool CTrumpLaserInterfaceWraper::setPulseBurstLength(UINT32 burstLength)
+{
+    return glbTrumpLaserInterfaceDll.setGetPulseBurstLength(burstLength);
 }
 
 bool CTrumpLaserInterfaceWraper::restartPulseGenerator(UINT16 waveform)
@@ -110,11 +80,6 @@ UINT CTrumpLaserInterfaceWraper::getLaserControlSignals()
     return glbTrumpLaserInterfaceDll.getLaserControlSignals();
 }
 
-UINT CTrumpLaserInterfaceWraper::getAnalogOrActiveSimmerCurrent(BOOL bIsSetSimmerCurrent)
-{
-    return glbTrumpLaserInterfaceDll.getAnalogOrActiveSimmerCurrent(bIsSetSimmerCurrent);
-}
-
 UINT CTrumpLaserInterfaceWraper::getPulseWaveform(UINT& selectedWaveform)
 {
     return glbTrumpLaserInterfaceDll.getPulseWaveform(selectedWaveform);
@@ -125,14 +90,19 @@ UINT CTrumpLaserInterfaceWraper::getPulseRate()
     return glbTrumpLaserInterfaceDll.getPulseRate();
 }
 
-UINT CTrumpLaserInterfaceWraper::getPulseBurstLength()
+UINT CTrumpLaserInterfaceWraper::getAnalogOrActiveSimmerCurrent(BOOL bIsSetSimmerCurrent)
 {
-    return glbTrumpLaserInterfaceDll.getPulseBurstLength();
+    return glbTrumpLaserInterfaceDll.getAnalogOrActiveSimmerCurrent(bIsSetSimmerCurrent);
 }
 
 UINT CTrumpLaserInterfaceWraper::getPumpDutyFactor()
 {
     return glbTrumpLaserInterfaceDll.getPumpDutyFactor();
+}
+
+UINT CTrumpLaserInterfaceWraper::getPulseBurstLength()
+{
+    return glbTrumpLaserInterfaceDll.getPulseBurstLength();
 }
 
 void CTrumpLaserInterfaceWraper::setStandby()

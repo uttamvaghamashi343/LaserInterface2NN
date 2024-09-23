@@ -61,9 +61,9 @@ CTrumpLaserInterfaceDll::~CTrumpLaserInterfaceDll()
 void CTrumpLaserInterfaceDll::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EDIT_ILM_TEST_ETHERNET_SETUP_LASER_IP, m_EditLaserIPAdd);
-	DDX_Text(pDX, IDC_EDIT_ILM_TEST_ETHERNET_SETUP_LASER_IP, m_csLaserIPAddress);
-	DDX_Text(pDX, IDC_EDIT_ILM_TEST_ETHERNET_SETUP_PORT, m_iPort);
+	DDX_Control(pDX, IDC_EDIT_TRUPULSENANO_SETUP_LASER_IP, m_EditLaserIPAdd);
+	DDX_Text(pDX, IDC_EDIT_TRUPULSENANO_SETUP_LASER_IP, m_csLaserIPAddress);
+	DDX_Text(pDX, IDC_EDIT_TRUPULSENANO_SETUP_PORT, m_iPort);
 	DDX_Text(pDX, IDC_STATIC_LASER_CONTROL_VALUE, m_csLaserControl);
 	DDX_Control(pDX, IDC_STATIC_PULSE_GENERATION_VALUE, m_csPulseGeneration);
 	DDX_Text(pDX, IDC_STATIC_CURRENT_CONTROL_VALUE, m_csCurrentControl);
@@ -95,11 +95,11 @@ void CTrumpLaserInterfaceDll::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SIMMER_VALUE, m_csGetSimmer);
 	DDX_Text(pDX, IDC_DUTY_FACTOR_VALUE, m_csGetDutyFactor);
 	DDX_Text(pDX, IDC_BURST_LENGTH_VALUE, m_csGetBurstLength);
-	DDX_Control(pDX, IDC_SPIN_PRF, m_ctrlSpinPRF);
-	DDX_Control(pDX, IDC_SPIN_ACTIVE, m_ctrlSpinActive);
-	DDX_Control(pDX, IDC_SPIN_SIMMER, m_ctrlSpinSimmer);
-	DDX_Control(pDX, IDC_SPIN_DUTY_FACTOR, m_ctrlSpinDutyFactor);
-	DDX_Control(pDX, IDC_SPIN_BURST_LENGTH, m_ctrlSpinBurstLength);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_PRF, m_ctrlSpinPRF);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_ACTIVE, m_ctrlSpinActive);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_SIMMER, m_ctrlSpinSimmer);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_DUTY_FACTOR, m_ctrlSpinDutyFactor);
+	DDX_Control(pDX, IDC_SPIN_TRUPULSENANO_BURST_LENGTH, m_ctrlSpinBurstLength);
 	DDX_Control(pDX, IDC_STATIC_PICTURE_TRUPULSENANO_LASER_ON, m_ctrlLaserOn);
 	DDX_Control(pDX, IDC_STATIC_PICTURE_TRUPULSENANO_LASER_ENABLED, m_ctrlLaserEnabled);
 	DDX_Control(pDX, IDC_STATIC_PICTURE_TRUPULSENANO_LASER_DISABLED, m_ctrlLaserDisabled);
@@ -120,13 +120,13 @@ void CTrumpLaserInterfaceDll::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CTrumpLaserInterfaceDll, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT, &CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupConnect)
-	ON_BN_CLICKED(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT, &CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupDisconnect)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_PRF, &CTrumpLaserInterfaceDll::OnDeltaposSpinPrf)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_ACTIVE, &CTrumpLaserInterfaceDll::OnDeltaposSpinActive)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_SIMMER, &CTrumpLaserInterfaceDll::OnDeltaposSpinSimmer)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_DUTY_FACTOR, &CTrumpLaserInterfaceDll::OnDeltaposSpinDutyFactor)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_BURST_LENGTH, &CTrumpLaserInterfaceDll::OnDeltaposSpinBurstLength)
+	ON_BN_CLICKED(IDC_BUTTON_TRUPULSENANO_SETUP_CONNECT, &CTrumpLaserInterfaceDll::OnBnClickedButtonTruPulseNanoSetupConnect)
+	ON_BN_CLICKED(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT, &CTrumpLaserInterfaceDll::OnBnClickedButtonTruPulseNanoSetupDisconnect)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_PRF, &CTrumpLaserInterfaceDll::OnDeltaposSpinPrf)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_ACTIVE, &CTrumpLaserInterfaceDll::OnDeltaposSpinActive)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_SIMMER, &CTrumpLaserInterfaceDll::OnDeltaposSpinSimmer)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_DUTY_FACTOR, &CTrumpLaserInterfaceDll::OnDeltaposSpinDutyFactor)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TRUPULSENANO_BURST_LENGTH, &CTrumpLaserInterfaceDll::OnDeltaposSpinBurstLength)
 	ON_CBN_SELCHANGE(IDC_COMBO_CONTROL_MODE, &CTrumpLaserInterfaceDll::OnCbnSelchangeComboControlMode)
 	ON_CBN_SELCHANGE(IDC_COMBO_CW_PULSE, &CTrumpLaserInterfaceDll::OnCbnSelchangeComboCwPulse)
 	ON_CBN_SELCHANGE(IDC_COMBO_WAVEFORM, &CTrumpLaserInterfaceDll::OnCbnSelchangeComboWaveform)
@@ -186,7 +186,7 @@ BOOL CTrumpLaserInterfaceDll::OnInitDialog()
 	readWriteLaserActiveParameterSet(READ_SETTING);
 
 	// Disable "Disconnect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT)->EnableWindow(FALSE);
 
 	// Initialize brushes
 	m_brushRed.CreateSolidBrush(RGB(255, 0, 0));   // Red color
@@ -236,19 +236,19 @@ HCURSOR CTrumpLaserInterfaceDll::OnQueryDragIcon()
 
 void CTrumpLaserInterfaceDll::CreateDlg(CWnd* pParent, CRect cDlgRect)
 {
-    // Create the dialog
-    Create(IDD_DIALOG_LASER_INTERFACE, pParent);
-    
-    // Get parent window size if needed for auto-resizing
-    CRect parentRect;
-    pParent->GetClientRect(parentRect);
+	// Create the dialog
+	Create(IDD_DIALOG_LASER_INTERFACE, pParent);
 
-    // Calculate width and height based on the parent (optional)
-    int width = cDlgRect.Width();
-    int height = cDlgRect.Height();
+	// Get parent window size if needed for auto-resizing
+	CRect parentRect;
+	pParent->GetClientRect(parentRect);
 
-    // Set the position and size of the dialog
-    SetWindowPos(NULL, 0, 0, width, height, SWP_SHOWWINDOW);
+	// Calculate width and height based on the parent (optional)
+	int width = cDlgRect.Width();
+	int height = cDlgRect.Height();
+
+	// Set the position and size of the dialog
+	SetWindowPos(NULL, 0, 0, width, height, SWP_SHOWWINDOW);
 }
 
 void CTrumpLaserInterfaceDll::fillComboBoxAndControlBox()
@@ -332,7 +332,7 @@ void CTrumpLaserInterfaceDll::setTooltipForControl()
 	m_ToolTip.AddTool(GetDlgItem(IDC_EDIT_BURST_LENGTH), _T("Max = 1000000, Min = 0"));
 }
 
-void CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupConnect()
+void CTrumpLaserInterfaceDll::OnBnClickedButtonTruPulseNanoSetupConnect()
 {
 	UpdateData(TRUE);
 	connectAsTCPIPClient(m_csLaserIPAddress, m_iPort);
@@ -343,16 +343,16 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupConnect()
 	if (m_bConnectResponce)
 	{
 		// Disable "Connect" button
-		GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_CONNECT)->EnableWindow(FALSE);
 	}
 
 	// Enable "Disconnect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(TRUE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT)->EnableWindow(TRUE);
 
 
 	if (m_bConnectResponce)
 	{
-		GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connected"));
+		GetDlgItem(IDC_EDIT_TRUPULSENANO_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connected"));
 
 		readWriteLaserActiveParameterSet(READ_SETTING);
 
@@ -364,12 +364,21 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupConnect()
 
 		setLEDLaserEmission(1);
 
-		OnBnClickedButtonStandby();
+		if (m_bEnableOn)
+		{
+			OnBnClickedButtonEnable();
+		}
+		else
+		{
+			OnBnClickedButtonStandby();
+		}
+
+		setGetActiveParameterSet();
 
 	}
 	else
 	{
-		GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connection Fail"));
+		GetDlgItem(IDC_EDIT_TRUPULSENANO_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Connection Fail"));
 
 		// Stop the timer if the connection fails
 		if (m_nTimerID != 0)
@@ -378,8 +387,6 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupConnect()
 			m_nTimerID = 0;
 		}
 	}
-
-	UpdateData(FALSE);
 
 }
 
@@ -427,17 +434,17 @@ void CTrumpLaserInterfaceDll::connectAsTCPIPClient(CString csIpAdress, int iPort
 	m_cAKGHWCDummy6Axis.ConnectToServer(csIpAdress, iPortNum, FALSE);
 }
 
-void CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupDisconnect()
+void CTrumpLaserInterfaceDll::OnBnClickedButtonTruPulseNanoSetupDisconnect()
 {
 	readWriteLaserActiveParameterSet(WRITE_SETTING);
 
 	m_bConnectResponce = false;
 
 	// Disable "Disconnect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_DISCONNECT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_DISCONNECT)->EnableWindow(FALSE);
 
 	// Enable "Connect" button
-	GetDlgItem(IDC_BUTTON_ILM_TEST_ETHERNET_SETUP_CONNECT)->EnableWindow(TRUE);
+	GetDlgItem(IDC_BUTTON_TRUPULSENANO_SETUP_CONNECT)->EnableWindow(TRUE);
 
 
 	// Stop the periodic timer if it's running
@@ -451,7 +458,7 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonIlmTestEthernetSetupDisconnect()
 	disconnectFromTCPIPClient();
 
 	// Update UI to show disconnection
-	GetDlgItem(IDC_EDIT_ILM_TEST_ETHERNET_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Disconnected"));
+	GetDlgItem(IDC_EDIT_TRUPULSENANO_SETUP_CONNECTION_STATUS)->SetWindowText(_T("Disconnected"));
 
 	// Optional: Set any LED or state indicators to off
 	setLEDLaserOn(0);
@@ -694,7 +701,7 @@ UINT CTrumpLaserInterfaceDll::getLaserInterfaceControlMode()
 	}
 	return iBr;
 }
-bool CTrumpLaserInterfaceDll::SetLaserInterfaceControlMode(UINT16 mode)
+bool CTrumpLaserInterfaceDll::setLaserInterfaceControlMode(UINT16 mode)
 {
 	if (!m_bConnectResponce)
 	{
@@ -2463,13 +2470,12 @@ void CTrumpLaserInterfaceDll::OnDeltaposSpinBurstLength(NMHDR* pNMHDR, LRESULT* 
 void CTrumpLaserInterfaceDll::OnCbnSelchangeComboControlMode()
 {
 	UINT iControlMode = m_ctrlControlMode.GetCurSel();
-	if (!SetLaserInterfaceControlMode(iControlMode))
+	if (!setLaserInterfaceControlMode(iControlMode))
 		return;
 
 	UINT iBR = getLaserInterfaceControlMode();
 	setReceivedDataFromTheAPS(COMMAND::L_CM, iBR);
 }
-
 
 void CTrumpLaserInterfaceDll::OnCbnSelchangeComboCwPulse()
 {
@@ -2480,7 +2486,6 @@ void CTrumpLaserInterfaceDll::OnCbnSelchangeComboCwPulse()
 
 	GetDlgItem(IDC_CW_PULSE_VALUE)->SetWindowText(_T("PULSE"));
 }
-
 
 void CTrumpLaserInterfaceDll::OnCbnSelchangeComboWaveform()
 {
@@ -2493,7 +2498,6 @@ void CTrumpLaserInterfaceDll::OnCbnSelchangeComboWaveform()
 	setReceivedDataFromTheAPS(COMMAND::L_PRF0, iBR);
 }
 
-
 void CTrumpLaserInterfaceDll::OnEnKillfocusEditPrf()
 {
 	UpdateData();
@@ -2504,7 +2508,6 @@ void CTrumpLaserInterfaceDll::OnEnKillfocusEditPrf()
 	UINT iBR = getPulseRate();
 	setReceivedDataFromTheAPS(COMMAND::L_PRF, iBR);
 }
-
 
 void CTrumpLaserInterfaceDll::OnEnKillfocusEditActive()
 {
@@ -2517,7 +2520,6 @@ void CTrumpLaserInterfaceDll::OnEnKillfocusEditActive()
 	setReceivedDataFromTheAPS(COMMAND::L_ACTIVE, iBR);
 }
 
-
 void CTrumpLaserInterfaceDll::OnEnKillfocusEditSimmer()
 {
 	UpdateData();
@@ -2528,7 +2530,6 @@ void CTrumpLaserInterfaceDll::OnEnKillfocusEditSimmer()
 	UINT iBR = getAnalogOrActiveSimmerCurrent(1);
 	setReceivedDataFromTheAPS(COMMAND::L_SIMMER, iBR);
 }
-
 
 void CTrumpLaserInterfaceDll::OnEnKillfocusEditDutyFactor()
 {
@@ -2543,7 +2544,6 @@ void CTrumpLaserInterfaceDll::OnEnKillfocusEditDutyFactor()
 	setReceivedDataFromTheAPS(COMMAND::L_DF, iBR);
 }
 
-
 void CTrumpLaserInterfaceDll::OnEnKillfocusEditBurstLength()
 {
 	UpdateData();
@@ -2555,19 +2555,16 @@ void CTrumpLaserInterfaceDll::OnEnKillfocusEditBurstLength()
 	setReceivedDataFromTheAPS(COMMAND::L_BL, iBR);
 }
 
-void CTrumpLaserInterfaceDll::setStandby()
-{
-	OnBnClickedButtonStandby();
-}
-
 void CTrumpLaserInterfaceDll::OnBnClickedButtonStandby()
 {
-	m_bEnableOn = false;
-
 	if (!m_bConnectResponce)
 	{
 		return;
 	}
+
+	m_bEnableOn = false;
+
+	GetDlgItem(IDC_COMBO_CONTROL_MODE)->ShowWindow(SW_SHOW);
 
 	if (!setLaserControlSignals(0))
 		return;
@@ -2594,19 +2591,16 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonStandby()
 	GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(FALSE);
 }
 
-void CTrumpLaserInterfaceDll::setEnable()
-{
-	OnBnClickedButtonEnable();
-}
-
 void CTrumpLaserInterfaceDll::OnBnClickedButtonEnable()
 {
-	m_bEnableOn = true;
-
 	if (!m_bConnectResponce)
 	{
 		return;
 	}
+
+	m_bEnableOn = true;
+
+	GetDlgItem(IDC_COMBO_CONTROL_MODE)->ShowWindow(SW_HIDE);
 
 	if (!setLaserControlSignals(1))
 		return;
@@ -2633,11 +2627,6 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonEnable()
 	GetDlgItem(IDC_BUTTON_TRIGGER)->EnableWindow(TRUE);
 }
 
-void CTrumpLaserInterfaceDll::setTrigger()
-{
-	OnBnClickedButtonTrigger();
-}
-
 void CTrumpLaserInterfaceDll::OnBnClickedButtonTrigger()
 {
 	if (!m_bConnectResponce)
@@ -2662,11 +2651,6 @@ void CTrumpLaserInterfaceDll::OnBnClickedButtonTrigger()
 	{
 		setLEDTaskActive(0);
 	}
-}
-
-void CTrumpLaserInterfaceDll::setRalOn()
-{
-	OnBnClickedButtonRalOn();
 }
 
 void CTrumpLaserInterfaceDll::OnBnClickedButtonRalOn()
@@ -2753,7 +2737,7 @@ void CTrumpLaserInterfaceDll::OnClose()
 	readWriteLaserActiveParameterSet(WRITE_SETTING);
 
 	m_bConnectResponce = false;
-	
+
 	if (m_nTimerID != 0)
 	{
 		KillTimer(m_nTimerID);
@@ -2907,24 +2891,20 @@ void CTrumpLaserInterfaceDll::readWriteLaserActiveParameterSet(BOOL bIsReading)
 		m_iPort = m_IniReadWritePrm.ReadInt(_T("Port"), sSection, 58174);
 		if (m_bConnectResponce)
 		{
-			m_csSetControlMode = m_IniReadWritePrm.ReadString(_T("ControlMode"), sSection, 0);
-			m_csSetCWPulse = m_IniReadWritePrm.ReadString(_T("CWPulse"), sSection, 0);
-			m_csSetWaveform = m_IniReadWritePrm.ReadString(_T("Waveform"), sSection, 0);
-			m_csSetPRF = m_IniReadWritePrm.ReadString(_T("PRF"), sSection, 0);
+			m_csSetControlMode = m_IniReadWritePrm.ReadString(_T("ControlMode"), sSection, _T("0"));
+			m_csSetCWPulse = m_IniReadWritePrm.ReadString(_T("CWPulse"), sSection, _T("Pulse"));
+			m_csSetWaveform = m_IniReadWritePrm.ReadString(_T("Waveform"), sSection, _T("33"));
+			m_csSetPRF = m_IniReadWritePrm.ReadString(_T("PRF"), sSection, _T("60000"));
 			//m_csSetPRF0 = m_IniReadWritePrm.ReadString(_T("PRF0"), sSection, 0);
-			m_csSetActive = m_IniReadWritePrm.ReadString(_T("Active"), sSection, 0);
-			m_csSetSimmer = m_IniReadWritePrm.ReadString(_T("Simmer"), sSection, 0);
-			m_csSetDutyFactor = m_IniReadWritePrm.ReadString(_T("DutyFactor"), sSection, 0);
-			m_csSetBurstLength = m_IniReadWritePrm.ReadString(_T("BurstLength"), sSection, 0);
+			m_csSetActive = m_IniReadWritePrm.ReadString(_T("Active"), sSection, _T("600"));
+			m_csSetSimmer = m_IniReadWritePrm.ReadString(_T("Simmer"), sSection, _T("50"));
+			m_csSetBurstLength = m_IniReadWritePrm.ReadString(_T("BurstLength"), sSection, _T("70000"));
+			m_bEnableOn = m_IniReadWritePrm.ReadInt(_T("EnableOn"), sSection, 0);
 		}
-		
-		//GetSetDataFromRadioAndCheckBox(TRUE);  // Set controls based on data
-		UpdateData(FALSE);  // Update dialog controls with new data
 	}
 	else
 	{
 		UpdateData(TRUE);  // Get current data from controls
-		//GetSetDataFromRadioAndCheckBox(FALSE); // Get checkbox and radio states
 
 		// Writing settings to the INI file
 		m_IniReadWritePrm.WriteString(_T("IPAddress"), sSection, m_csLaserIPAddress);
@@ -2938,9 +2918,111 @@ void CTrumpLaserInterfaceDll::readWriteLaserActiveParameterSet(BOOL bIsReading)
 			//m_IniReadWritePrm.WriteString(_T("PRF0"), sSection, m_csSetPRF0);
 			m_IniReadWritePrm.WriteString(_T("Active"), sSection, m_csSetActive);
 			m_IniReadWritePrm.WriteString(_T("Simmer"), sSection, m_csSetSimmer);
-			m_IniReadWritePrm.WriteString(_T("DutyFactor"), sSection, m_csSetDutyFactor);
 			m_IniReadWritePrm.WriteString(_T("BurstLength"), sSection, m_csSetBurstLength);
+			m_IniReadWritePrm.WriteInt(_T("EnableOn"), sSection, m_bEnableOn);
 		}
 	}
 }
 
+void CTrumpLaserInterfaceDll::setGetActiveParameterSet()
+{
+	setGetLaserInterfaceControlMode(_ttoi(m_csSetControlMode));
+	GetDlgItem(IDC_CW_PULSE_VALUE)->SetWindowText(_T("PULSE"));
+	setGetPulseWaveform(_ttoi(m_csSetWaveform));
+	setGetPulseRate(_ttoi(m_csSetPRF));
+	setGetAnalogActiveCurrent(_ttoi(m_csSetActive));
+	setGetAnalogSimmerCurrent(_ttoi(m_csSetSimmer));
+	setGetPulseBurstLength(_ttoi(m_csSetBurstLength));
+}
+
+bool CTrumpLaserInterfaceDll::setGetLaserInterfaceControlMode(UINT16 mode)
+{
+	if (!setLaserInterfaceControlMode(mode))
+		return false;
+	m_ctrlControlMode.SetCurSel(_ttoi(m_csSetControlMode));
+
+	UINT iBR = getLaserInterfaceControlMode();
+	setReceivedDataFromTheAPS(COMMAND::L_CM, iBR);
+}
+
+bool CTrumpLaserInterfaceDll::setGetPulseWaveform(UINT16 waveformNumber)
+{
+	if (!setPulseWaveform(waveformNumber))
+		return false;
+	m_ctrlWaveform.SetCurSel(_ttoi(m_csSetWaveform));
+
+	UINT selectedWaveform;
+	UINT iBR = getPulseWaveform(selectedWaveform);
+	setReceivedDataFromTheAPS(COMMAND::L_WAVEFORM, selectedWaveform);
+	setReceivedDataFromTheAPS(COMMAND::L_PRF0, iBR);
+}
+
+bool CTrumpLaserInterfaceDll::setGetPulseRate(UINT32 pulseRate)
+{
+	if (!setPulseRate(pulseRate))
+		return false;
+	GetDlgItem(IDC_EDIT_PRF)->SetWindowText(m_csSetPRF);
+
+	UINT iBR = getPulseRate();
+	setReceivedDataFromTheAPS(COMMAND::L_PRF, iBR);
+}
+
+bool CTrumpLaserInterfaceDll::setGetAnalogActiveCurrent(UINT16 currentValue)
+{
+	if (!setAnalogActiveCurrent(currentValue))
+		return false;
+	GetDlgItem(IDC_EDIT_ACTIVE)->SetWindowText(m_csSetActive);
+
+	UINT iBR = getAnalogOrActiveSimmerCurrent(0);
+	setReceivedDataFromTheAPS(COMMAND::L_ACTIVE, iBR);
+}
+
+bool CTrumpLaserInterfaceDll::setGetAnalogSimmerCurrent(UINT16 currentValue)
+{
+	if (!setAnalogSimmerCurrent(currentValue))
+		return false;
+	GetDlgItem(IDC_EDIT_SIMMER)->SetWindowText(m_csSetSimmer);
+
+	UINT iBR = getAnalogOrActiveSimmerCurrent(1);
+	setReceivedDataFromTheAPS(COMMAND::L_SIMMER, iBR);
+}
+
+bool CTrumpLaserInterfaceDll::setGetPumpDutyFactor(UINT16 dutyFactor)
+{
+	if (!setPumpDutyFactor(dutyFactor * 10))
+		return false;
+	GetDlgItem(IDC_EDIT_DUTY_FACTOR)->SetWindowText(m_csSetDutyFactor);
+
+	UINT iBR = getPumpDutyFactor();
+	setReceivedDataFromTheAPS(COMMAND::L_DF, iBR);
+}
+
+bool CTrumpLaserInterfaceDll::setGetPulseBurstLength(UINT32 burstLength)
+{
+	if (!setPulseBurstLength(burstLength))
+		return false;
+	GetDlgItem(IDC_EDIT_BURST_LENGTH)->SetWindowText(m_csSetBurstLength);
+
+	UINT iBR = getPulseBurstLength();
+	setReceivedDataFromTheAPS(COMMAND::L_BL, iBR);
+}
+
+void CTrumpLaserInterfaceDll::setStandby()
+{
+	OnBnClickedButtonStandby();
+}
+
+void CTrumpLaserInterfaceDll::setEnable()
+{
+	OnBnClickedButtonEnable();
+}
+
+void CTrumpLaserInterfaceDll::setTrigger()
+{
+	OnBnClickedButtonTrigger();
+}
+
+void CTrumpLaserInterfaceDll::setRalOn()
+{
+	OnBnClickedButtonRalOn();
+}
